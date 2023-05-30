@@ -1,8 +1,10 @@
 import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { COLORS, FONT, SIZES } from "../../../constants/theme";
 import { Welcome } from "../../../components";
+import GainersLosers from "../../../components/home/GainersLosers";
+import { COLORS, FONT, SIZES } from "../../../constants";
+import WatchList from "../../../components/home/WatchList";
 
 const HomeTabIndex = () => {
   return (
@@ -24,6 +26,8 @@ const HomeTabIndex = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1, padding: SIZES.md }}>
           <Welcome />
+          <GainersLosers />
+          <WatchList />
         </View>
       </ScrollView>
     </View>
