@@ -5,7 +5,8 @@ import {
   PhoneAuthProvider,
   signInWithCredential,
 } from "firebase/auth/react-native";
-import { auth } from "./firebase-config";
+import { auth, db } from "./firebase-config";
+import { doc, setDoc } from "firebase/firestore";
 
 export const AuthStore = new Store({
   isLoggedIn: false,
@@ -30,6 +31,19 @@ export const phoneSignIn = async (verificationId, smsCode) => {
       store.user = resp.user;
       store.isLoggedIn = resp.user ? true : false;
     });
+
+    const usersSnapshot = doc(db, "users", auth.currentUser.uid);
+    // Create user in firestore for the first time if user doesnt already exsist
+    if (auth?.currentUser && usersSnapshot.id != auth.currentUser.uid) {
+      try {
+        await setDoc(doc(db, "users", auth.currentUser.uid), {
+          userId: auth.currentUser.uid,
+          watchList: [],
+        });
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    }
     return { user: auth.currentUser };
   } catch (e) {
     return { error: e };

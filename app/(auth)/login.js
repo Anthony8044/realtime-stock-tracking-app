@@ -32,6 +32,10 @@ const Login = () => {
         setStep("initial");
         Alert.alert("Repatcha failed");
         return;
+      case "Timeout":
+        setStep("initial");
+        Alert.alert("Repatcha Timed Out!");
+        return;
       case "":
         return;
       default: {
