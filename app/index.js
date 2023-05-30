@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthStore } from "../store";
+import { COLORS } from "../constants/theme";
 
 const Home = () => {
   const router = useRouter();
@@ -24,7 +25,7 @@ const Home = () => {
   }, [segments, navigationState?.key, initialized]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       {!navigationState?.key ? <Text>LOADING...</Text> : <></>}
     </SafeAreaView>
   );
