@@ -2,11 +2,11 @@ import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Alert,
-  Button,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,7 +29,8 @@ const Login = () => {
       case "DOMLoaded":
         return;
       case "ErrorSmsCode":
-        // SMS Not sent or Captcha verification failed. You can do whatever you want here
+        setStep("initial");
+        Alert.alert("Repatcha failed");
         return;
       case "":
         return;
@@ -40,25 +41,63 @@ const Login = () => {
     }
   };
 
+  const handlePhoneSubmit = (phone) => {
+    console.log("+852" + phoneRef.current);
+    // HK phone number validator
+    if (/^[0-9]{8}$/.test(phone)) {
+      setStep("phoneSubmitted");
+    } else {
+      Alert.alert("Input a valid HK phone number");
+    }
+  };
+
+  const handleOTPSubmit = async (otp) => {
+    // 6 digit otp validator
+    if (/^[0-9]{6}$/.test(otp)) {
+      setStep("smsCodeSubmitted");
+      const resp = await phoneSignIn(verificationId, otpRef.current);
+      if (resp?.user) {
+        router.replace("/(tabs)/home");
+      } else {
+        console.log(resp.error);
+        Alert.alert("Login Error", resp.error?.message);
+      }
+    } else {
+      Alert.alert("Enter 6 Digit OTP Code");
+    }
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View style={styles.container}>
       {step === "initial" && (
-        <KeyboardAvoidingView behavior="padding" enabled>
+        <KeyboardAvoidingView
+          behavior="padding"
+          enabled
+          style={{ width: "100%" }}
+        >
           <Text style={styles.label}>Enter Mobile Number</Text>
-          <TextInput
-            placeholder="+85211111111"
-            nativeID="phone"
-            keyboardType="phone-pad"
-            onChangeText={(text) => {
-              phoneRef.current = text;
-            }}
-            style={styles.textInput}
-          />
-          <Button
-            mode="contained"
-            onPress={() => setStep("phoneSubmitted")}
-            title=" Send me the code!"
-          ></Button>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputFlag}>
+              <Text style={styles.textFlag}>🇭🇰</Text>
+            </View>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                placeholder="1111 1111"
+                nativeID="phone"
+                keyboardType="number-pad"
+                onChangeText={(text) => {
+                  phoneRef.current = text;
+                }}
+                style={styles.textInput}
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handlePhoneSubmit(phoneRef.current)}
+          >
+            <Text style={styles.buttonText}>Send me the code!</Text>
+          </TouchableOpacity>
         </KeyboardAvoidingView>
       )}
 
@@ -66,9 +105,9 @@ const Login = () => {
         <SafeAreaView
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text>{`getToken('${phoneRef.current}')`}</Text>
+          <Text>{`getToken('${"+852" + phoneRef.current}')`}</Text>
           <WebView
-            injectedJavaScript={`getToken('${phoneRef.current}')`}
+            injectedJavaScript={`getToken('${"+852" + phoneRef.current}')`}
             source={{ uri: captchaUrl }}
             onMessage={onGetMessage}
           />
@@ -76,36 +115,39 @@ const Login = () => {
       )}
 
       {step === "promptSmsCode" && (
-        <KeyboardAvoidingView behavior="padding" enabled>
+        <KeyboardAvoidingView
+          behavior="padding"
+          enabled
+          style={{ width: "100%" }}
+        >
           <Text style={styles.label}>Enter OTP</Text>
-          <TextInput
-            placeholder="otp"
-            nativeID="otp"
-            keyboardType="number-pad"
-            onChangeText={(text) => {
-              otpRef.current = text;
-            }}
-            style={styles.textInput}
-          />
-          <Button
-            mode="contained"
-            onPress={async () => {
-              setStep("smsCodeSubmitted");
-              const resp = await phoneSignIn(verificationId, otpRef.current);
-              if (resp?.user) {
-                router.replace("/(tabs)/home");
-              } else {
-                console.log(resp.error);
-                Alert.alert("Login Error", resp.error?.message);
-              }
-            }}
-            title="Send"
-          ></Button>
-          <Button
-            mode="contained"
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                placeholder="otp"
+                nativeID="otp"
+                keyboardType="number-pad"
+                maxLength={6}
+                onChangeText={(text) => {
+                  otpRef.current = text;
+                }}
+                style={styles.textInput}
+              />
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleOTPSubmit(otpRef.current)}
+          >
+            <Text style={styles.buttonText}>Send</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => setStep("phoneSubmitted")}
-            title=" ResendOTP"
-          ></Button>
+          >
+            <Text style={styles.buttonText}>Resend OTP</Text>
+          </TouchableOpacity>
         </KeyboardAvoidingView>
       )}
     </View>
@@ -115,17 +157,60 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: "5%",
+  },
   label: {
+    fontSize: 24,
     marginBottom: 4,
-    color: "#455fff",
+    color: "#312651",
   },
   textInput: {
-    width: 250,
+    width: "100%",
+    height: "100%",
+    paddingHorizontal: 16,
+  },
+  inputContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: 20,
+    height: 50,
+  },
+  inputWrapper: {
+    flex: 1,
+    backgroundColor: "#FAFAFC",
     borderWidth: 1,
-    borderRadius: 4,
-    borderColor: "#455fff",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginBottom: 8,
+    borderColor: "#312651",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 16,
+    height: "100%",
+    marginLeft: 8,
+  },
+  inputFlag: {
+    width: 50,
+    height: "100%",
+    backgroundColor: "#FF7754",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: 20,
+    height: 50,
+    backgroundColor: "#312651",
+    borderWidth: 1,
+    borderRadius: 16,
+  },
+  buttonText: {
+    color: "#F3F4F8",
   },
 });
