@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "scheme": "acme",
+    "web": {
+      "bundler": "metro"
+    },
+    "name": "realtime-stock-tracking-app",
+    "slug": "realtime-stock-tracking-app"
+  }
+}
