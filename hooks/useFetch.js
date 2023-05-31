@@ -31,6 +31,13 @@ const useFetch = (api, endpoint, query) => {
         params: { apikey: FINANCIALMODELING_API_KEY },
       };
       break;
+    case "alphavantage":
+      options = {
+        method: "GET",
+        url: `https://www.alphavantage.co/query?`,
+        params: { ...query, apikey: ALPHA_VANTAGE_KEY },
+      };
+      break;
     default:
       console.log(`Use a valid api string`);
       return { data, isLoading, error, refetch };
@@ -59,7 +66,7 @@ const useFetch = (api, endpoint, query) => {
         setData(response.data);
         setIsLoading(false);
       }
-      console.log("API request from: ", response);
+      console.log("API request from: ", api);
     } catch (error) {
       setError(error?.message ?? error);
       console.log("error: ", error);
@@ -73,7 +80,7 @@ const useFetch = (api, endpoint, query) => {
   }, []);
 
   const refetch = () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     fetchData();
   };
 

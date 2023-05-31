@@ -9,6 +9,9 @@ import GainersLosersCard from "./common/GainersLosersCard";
 import ScreenHeaderBtn from "./common/ScreenHeaderBtn";
 import StockHeader from "./common/StockHeader";
 import IntervalTabs from "./common/IntervalTabs";
+import StockChart from "./common/StockChart";
+import StockNews from "./common/StockNews";
+import StockNewsCard from "./common/StockNewsCard";
 
 export {
   Welcome,
@@ -19,4 +22,7 @@ export {
   ScreenHeaderBtn,
   StockHeader,
   IntervalTabs,
+  StockChart,
+  StockNews,
+  StockNewsCard,
 };

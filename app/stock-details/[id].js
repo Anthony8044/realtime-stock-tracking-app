@@ -3,13 +3,20 @@ import {
   ActivityIndicator,
   Alert,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { COLORS, FONT, SIZES } from "../../constants";
-import { IntervalTabs, ScreenHeaderBtn, StockHeader } from "../../components";
+import {
+  IntervalTabs,
+  ScreenHeaderBtn,
+  StockChart,
+  StockHeader,
+  StockNews,
+} from "../../components";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase-config";
 import {
@@ -22,10 +29,10 @@ import {
 import useFetch from "../../hooks/useFetch";
 
 const timeIntervals = [
-  { time: "1d", params: { interval: "15min", outputsize: "30" } },
-  { time: "1m", params: { interval: "1day", outputsize: "22" } },
-  { time: "6m", params: { interval: "1week", outputsize: "24" } },
-  { time: "1y", params: { interval: "1month", outputsize: "13" } },
+  { time: "1 Day", params: { interval: "15min", outputsize: "30" } },
+  { time: "1 Month", params: { interval: "1day", outputsize: "22" } },
+  { time: "6 Months", params: { interval: "1week", outputsize: "24" } },
+  { time: "1 Year", params: { interval: "1month", outputsize: "13" } },
 ];
 
 const StockDetails = () => {
@@ -76,6 +83,7 @@ const StockDetails = () => {
     };
     isFollowed ? unFollowItem() : followItem();
   };
+  // console.log(data);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
@@ -98,19 +106,26 @@ const StockDetails = () => {
           headerTitle: "",
         }}
       />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         {isLoading ? (
           <ActivityIndicator size="large" color={COLORS.primary} />
         ) : error ? (
           <Text>Something went wrong</Text>
         ) : (
-          <StockHeader symbol={params.id} timeData={data} />
+          <>
+            {Object.keys(data).length != 0 && (
+              <>
+                <StockHeader symbol={params.id} timeData={data} />
+                <IntervalTabs
+                  tabs={timeIntervals}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+                <StockChart timeData={data} />
+              </>
+            )}
+          </>
         )}
-        <IntervalTabs
-          tabs={timeIntervals}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
         <TouchableOpacity
           style={styles.button(isFollowed)}
           onPress={() => onWatchListPress()}
@@ -119,7 +134,8 @@ const StockDetails = () => {
             {isFollowed ? "Unfollow" : "Follow"}
           </Text>
         </TouchableOpacity>
-      </View>
+        <StockNews symbol={params.id} />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -129,7 +145,7 @@ export default StockDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
     width: "100%",
     paddingHorizontal: "5%",
   },
@@ -137,7 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    marginTop: 20,
+    marginTop: 8,
     height: 50,
     backgroundColor: isFollowed ? COLORS.gray : COLORS.primary,
     borderWidth: 1,
