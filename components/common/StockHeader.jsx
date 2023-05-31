@@ -6,14 +6,15 @@ import { COLORS, FONT, SIZES } from "../../constants";
 const StockHeader = ({ symbol, timeData }) => {
   const { data, isLoading, error } = useFetch("rapidapi", "quote", {
     symbol: symbol,
+    interval: "1min",
   });
   const changesPercentage =
-    ((parseInt(timeData?.values[0]?.close) -
-      parseInt(timeData?.values[timeData?.values?.length - 1]?.open)) /
-      parseInt(timeData?.values[0]?.close)) *
+    ((parseInt(timeData?.values[timeData?.values?.length - 1]?.open) -
+      parseInt(timeData?.values[0]?.close)) /
+      parseInt(timeData?.values[timeData?.values?.length - 1]?.open)) *
     100;
   //   const newData = timeData ? Object.entries({ [symbol]: { ...timeData } }) : {};
-  //   console.log(timeData.values);
+  console.log(timeData?.values[0]);
 
   return (
     <View>
@@ -27,8 +28,7 @@ const StockHeader = ({ symbol, timeData }) => {
         <Text style={styles.change}>
           {"$" +
             (
-              parseInt(data?.close) -
-              parseInt(timeData?.values[timeData?.values?.length - 1]?.open)
+              parseInt(data?.close) - parseInt(timeData?.values[0]?.open)
             ).toFixed(2)}
         </Text>
       </View>
