@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import { phoneSignIn } from "../../store";
 
@@ -106,16 +105,13 @@ const Login = () => {
       )}
 
       {step === "phoneSubmitted" && (
-        <SafeAreaView
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text>{`getToken('${"+852" + phoneRef.current}')`}</Text>
-          <WebView
-            injectedJavaScript={`getToken('${"+852" + phoneRef.current}')`}
-            source={{ uri: captchaUrl }}
-            onMessage={onGetMessage}
-          />
-        </SafeAreaView>
+        <WebView
+          injectedJavaScript={`getToken('${"+852" + phoneRef.current}')`}
+          source={{ uri: captchaUrl }}
+          onMessage={onGetMessage}
+          cacheEnabled={false}
+          incognito={true}
+        />
       )}
 
       {step === "promptSmsCode" && (

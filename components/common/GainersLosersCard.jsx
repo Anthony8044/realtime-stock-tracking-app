@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { COLORS, FONT, SHADOWS, SIZES } from "../../constants";
 
 const GainersLosersCard = ({ item }) => {
+  // console.log(item);
   return (
     <TouchableOpacity style={styles.container} onPress={() => ""}>
       <TouchableOpacity style={styles.logoContainer}>
@@ -13,13 +14,13 @@ const GainersLosersCard = ({ item }) => {
         />
       </TouchableOpacity>
       <Text style={styles.companyName} numberOfLines={1}>
-        {item.name}
+        {item?.name?.length > 0 ? item?.name : item?.symbol}
       </Text>
 
       <View style={styles.jobName}>
-        <Text>{"$" + item.price}</Text>
-        <Text style={styles.location}>{item.changesPercentage}</Text>
-        <Text style={styles.location}>{item.change}</Text>
+        <Text>{"$" + item?.price}</Text>
+        <Text style={styles.location}>{item?.changesPercentage}</Text>
+        <Text style={styles.location}>{item?.change}</Text>
       </View>
     </TouchableOpacity>
   );

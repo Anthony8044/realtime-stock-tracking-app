@@ -12,18 +12,29 @@ import { StyleSheet } from "react-native";
 import { dummyGainer, dummyLoser } from "../../dummyData";
 import { COLORS, FONT, SIZES } from "../../constants";
 import GainersLosersCard from "../common/GainersLosersCard";
+import useFetch from "../../hooks/useFetch";
 
 const GainersLosers = () => {
   const router = useRouter();
 
-  const data = dummyGainer
-    .concat(dummyLoser)
+  const { data, isLoading, error } = useFetch(
+    "financialmodelingprep",
+    "stock_market/losers"
+  );
+  const {
+    data: dataTwo,
+    isLoading: isLoadingTwo,
+    error: errorTwo,
+  } = useFetch("financialmodelingprep", "stock_market/gainers");
+
+  const dataConcat = data
+    .concat(dataTwo)
     .sort(
       (a, b) => Math.abs(b.changesPercentage) - Math.abs(a.changesPercentage)
     )
     .slice(0, 10);
-  const isLoading = false;
-  const error = false;
+  // const isLoading = false;
+  // const error = false;
 
   return (
     <View style={styles.container}>
@@ -40,9 +51,9 @@ const GainersLosers = () => {
           <Text>Something went wrong</Text>
         ) : (
           <FlatList
-            data={data}
+            data={dataConcat}
             renderItem={({ item }) => <GainersLosersCard item={item} />}
-            keyExtractor={(item) => item?.symbol}
+            keyExtractor={(item, index) => index}
             contentContainerStyle={{ columnGap: SIZES.md }}
             horizontal
           />

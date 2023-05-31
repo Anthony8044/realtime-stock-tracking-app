@@ -5,9 +5,9 @@ import { COLORS, SHADOWS, SIZES } from "../../constants";
 
 const WatchListCard = ({ item, handleNavigate }) => {
   const changesPercentage =
-    ((parseInt(item.values[0].close) -
-      parseInt(item.values[item.values.length - 1].open)) /
-      parseInt(item.values[0].close)) *
+    ((parseInt(item?.values[0]?.close) -
+      parseInt(item?.values[item?.values?.length - 1]?.open)) /
+      parseInt(item?.values[0]?.close)) *
     100;
   return (
     <TouchableOpacity
@@ -23,14 +23,14 @@ const WatchListCard = ({ item, handleNavigate }) => {
       </TouchableOpacity>
 
       <View style={styles.textContainer}>
-        <Text style={styles.jobName}>{item.meta.symbol}</Text>
+        <Text style={styles.jobName}>{item?.meta?.symbol}</Text>
         <Text style={styles.location}>
           {changesPercentage.toFixed(2) + "%"}
         </Text>
       </View>
       <View>
         <Text style={styles.jobName}>
-          {"$" + parseInt(item.values[0].close).toFixed(2)}
+          {"$" + parseInt(item?.values[0]?.close).toFixed(2)}
         </Text>
       </View>
     </TouchableOpacity>
