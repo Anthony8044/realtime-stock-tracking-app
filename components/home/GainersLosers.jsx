@@ -17,24 +17,31 @@ import useFetch from "../../hooks/useFetch";
 const GainersLosers = () => {
   const router = useRouter();
 
-  const { data, isLoading, error } = useFetch(
-    "financialmodelingprep",
-    "stock_market/losers"
-  );
-  const {
-    data: dataTwo,
-    isLoading: isLoadingTwo,
-    error: errorTwo,
-  } = useFetch("financialmodelingprep", "stock_market/gainers");
+  // const { data, isLoading, error } = useFetch(
+  //   "financialmodelingprep",
+  //   "stock_market/losers"
+  // );
+  // const {
+  //   data: dataTwo,
+  //   isLoading: isLoadingTwo,
+  //   error: errorTwo,
+  // } = useFetch("financialmodelingprep", "stock_market/gainers");
+  // const dataConcat = data
+  // .concat(dataTwo)
+  // .sort(
+  //   (a, b) => Math.abs(b.changesPercentage) - Math.abs(a.changesPercentage)
+  // )
+  // .slice(0, 10);
 
-  const dataConcat = data
-    .concat(dataTwo)
+  // DUMMY VALUES FOR TESTING
+  const dataConcat = dummyGainer
+    .concat(dummyLoser)
     .sort(
       (a, b) => Math.abs(b.changesPercentage) - Math.abs(a.changesPercentage)
     )
     .slice(0, 10);
-  // const isLoading = false;
-  // const error = false;
+  const isLoading = false;
+  const error = false;
 
   return (
     <View style={styles.container}>

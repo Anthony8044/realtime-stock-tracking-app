@@ -1,11 +1,16 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { COLORS, FONT, SHADOWS, SIZES } from "../../constants";
+import { useRouter } from "expo-router";
 
 const GainersLosersCard = ({ item }) => {
+  const router = useRouter();
   // console.log(item);
   return (
-    <TouchableOpacity style={styles.container} onPress={() => ""}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => router.push(`/stock-details/${item?.symbol}`)}
+    >
       <TouchableOpacity style={styles.logoContainer}>
         <Image
           source={{ uri: item?.employer_logo }}

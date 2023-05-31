@@ -14,24 +14,26 @@ import { StyleSheet } from "react-native";
 import WatchListCard from "../common/WatchListCard";
 import useFetch from "../../hooks/useFetch";
 
-const WatchList = () => {
+const WatchList = ({ symbols }) => {
   const router = useRouter();
-  const symbols = ["AMZN", "NFLX"];
 
-  const { data, isLoading, error } = useFetch("rapidapi", "time_series", {
-    symbol: symbols.toString(),
-    interval: "1h",
-    outputsize: "7",
-    format: "json",
-  });
+  // const { data, isLoading, error } = useFetch("rapidapi", "time_series", {
+  //   symbol: symbols.toString(),
+  //   interval: "1h",
+  //   outputsize: "7",
+  //   format: "json",
+  // });
+  // const newData = data
+  //   ? Object.entries(
+  //       symbols.length === 1 ? { [symbols.toString()]: { ...data } } : data
+  //     )
+  //   : [];
 
-  const newData = data
-    ? Object.entries(
-        symbols.length === 1 ? { [symbols.toString()]: { ...data } } : data
-      )
-    : [];
-  // const isLoading = false;
-  // const error = false;
+  // DUMMY VALUES FOR TESTING
+  const newData = Object.entries(dummyWatchList);
+  const isLoading = false;
+  const error = false;
+
   useEffect(() => {
     if (error) {
       Alert.alert("There is an error: ", error);
@@ -53,7 +55,13 @@ const WatchList = () => {
           <Text>Something went wrong</Text>
         ) : (
           newData.length > 0 &&
-          newData?.map((item) => <WatchListCard item={item[1]} key={item[0]} />)
+          newData?.map((item) => (
+            <WatchListCard
+              item={item[1]}
+              key={item[0]}
+              handleNavigate={() => router.push(`/stock-details/${item[0]}`)}
+            />
+          ))
         )}
       </View>
     </View>

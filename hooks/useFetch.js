@@ -59,9 +59,9 @@ const useFetch = (api, endpoint, query) => {
         setData(response.data);
         setIsLoading(false);
       }
-      console.log("API request from: ", api);
+      console.log("API request from: ", response);
     } catch (error) {
-      setError(error);
+      setError(error?.message ?? error);
       console.log("error: ", error);
     } finally {
       setIsLoading(false);
