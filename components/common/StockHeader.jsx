@@ -14,7 +14,7 @@ const StockHeader = ({ symbol, timeData }) => {
       parseInt(timeData?.values[timeData?.values?.length - 1]?.open)) *
     100;
   //   const newData = timeData ? Object.entries({ [symbol]: { ...timeData } }) : {};
-  console.log(timeData?.values[0]);
+  // console.log(data);
 
   return (
     <View>

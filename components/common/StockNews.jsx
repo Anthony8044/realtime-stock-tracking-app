@@ -10,6 +10,12 @@ const StockNews = ({ symbol }) => {
     tickers: symbol,
     limit: 10,
   });
+  const stockData =
+    data?.feed?.length > 0
+      ? data?.feed?.length > 5
+        ? data.feed?.slice(0, 5)
+        : data?.feed
+      : [];
   return (
     <View>
       {isLoading ? (
@@ -31,12 +37,10 @@ const StockNews = ({ symbol }) => {
               >
                 News
               </Text>
-              {data?.feed.length > 0 &&
-                data.feed
-                  ?.slice(0, 5)
-                  .map((item, index) => (
-                    <StockNewsCard item={item} index={index} />
-                  ))}
+              {stockData.length > 0 &&
+                stockData.map((item, index) => (
+                  <StockNewsCard item={item} index={index} key={index} />
+                ))}
             </>
           )}
         </>

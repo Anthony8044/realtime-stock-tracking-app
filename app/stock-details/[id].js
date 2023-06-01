@@ -27,6 +27,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import useFetch from "../../hooks/useFetch";
+import onShare from "../../hooks/common";
 
 const timeIntervals = [
   { time: "1 Day", params: { interval: "15min", outputsize: "30" } },
@@ -101,7 +102,13 @@ const StockDetails = () => {
             />
           ),
           headerRight: () => (
-            <ScreenHeaderBtn icon={"ios-share"} dimension={20} />
+            <ScreenHeaderBtn
+              icon={"ios-share"}
+              dimension={20}
+              handlePress={() =>
+                onShare(data?.meta?.symbol, data?.meta?.exchange)
+              }
+            />
           ),
           headerTitle: "",
         }}
