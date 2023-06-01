@@ -11,7 +11,7 @@ const StockChart = ({ timeData }) => {
         data={{
           datasets: [
             {
-              data: timeData.values.reverse().map((a) => a.close),
+              data: timeData.values.map((a) => a.close),
               strokeWidth: 2,
             },
           ],

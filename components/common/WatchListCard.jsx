@@ -1,37 +1,37 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { StyleSheet } from "react-native";
-import { COLORS, SHADOWS, SIZES } from "../../constants";
+import { COLORS, FONT, SHADOWS, SIZES } from "../../constants";
+import { Ionicons } from "@expo/vector-icons";
 
 const WatchListCard = ({ item, handleNavigate }) => {
-  const changesPercentage =
-    ((parseInt(item?.values[0]?.close) -
-      parseInt(item?.values[item?.values?.length - 1]?.open)) /
-      parseInt(item?.values[0]?.close)) *
-    100;
+  const upDownIndication = item?.percent_change > 0 ? "up" : "down";
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => handleNavigate(item)}
     >
       <TouchableOpacity style={styles.logoContainer}>
-        <Image
-          source={{ uri: item?.employer_logo }}
-          resizeMode="contain"
-          style={styles.logoImage}
-        />
+        <Text style={styles.price}>{item?.symbol}</Text>
       </TouchableOpacity>
 
       <View style={styles.textContainer}>
-        <Text style={styles.jobName}>{item?.meta?.symbol}</Text>
-        <Text style={styles.location}>
-          {changesPercentage.toFixed(2) + "%"}
+        <Text style={styles.price} numberOfLines={1}>
+          {item?.name}
+        </Text>
+        <Text style={styles.percent}>
+          {Number(item?.percent_change).toFixed(2) + "%"}
+          {"  "}
+          {"$" + Number(item?.change).toFixed(2)}
         </Text>
       </View>
+      {upDownIndication === "up" ? (
+        <Ionicons name="trending-up" size={36} color="#137333" />
+      ) : (
+        <Ionicons name="trending-down" size={36} color="#a50e0f" />
+      )}
       <View>
-        <Text style={styles.jobName}>
-          {"$" + parseInt(item?.values[0]?.close).toFixed(2)}
-        </Text>
+        <Text style={styles.price}>{"$" + Number(item?.close).toFixed(2)}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -64,19 +64,16 @@ const styles = StyleSheet.create({
     height: "70%",
   },
   textContainer: {
-    flex: 1,
     marginHorizontal: SIZES.md,
   },
-  jobName: {
+  price: {
     fontSize: SIZES.md,
-    fontFamily: "SSPBold",
+    fontFamily: FONT.bold,
     color: COLORS.primary,
   },
-  jobType: {
-    fontSize: SIZES.sm + 2,
-    fontFamily: "DMRegular",
-    color: COLORS.gray,
-    marginTop: 3,
-    textTransform: "capitalize",
+  percent: {
+    fontSize: SIZES.md,
+    fontFamily: FONT.light,
+    color: COLORS.primary,
   },
 });

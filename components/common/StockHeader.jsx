@@ -2,17 +2,25 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import useFetch from "../../hooks/useFetch";
 import { COLORS, FONT, SIZES } from "../../constants";
+import { Ionicons } from "@expo/vector-icons";
 
 const StockHeader = ({ symbol, timeData }) => {
   const { data, isLoading, error } = useFetch("rapidapi", "quote", {
     symbol: symbol,
     interval: "1min",
   });
-  const changesPercentage =
-    ((parseInt(timeData?.values[timeData?.values?.length - 1]?.open) -
-      parseInt(timeData?.values[0]?.close)) /
-      parseInt(timeData?.values[timeData?.values?.length - 1]?.open)) *
-    100;
+  const changesPercentage = Math.abs(
+    ((Number(timeData?.values[timeData?.values?.length - 1]?.open) -
+      Number(timeData?.values[0]?.close)) /
+      Number(timeData?.values[timeData?.values?.length - 1]?.open)) *
+      100
+  );
+  const upDownIndication =
+    Number(timeData?.values[0]?.close) <
+    Number(timeData?.values[timeData?.values?.length - 1]?.open)
+      ? "up"
+      : "down";
+  // console.log(upDownIndication);
   //   const newData = timeData ? Object.entries({ [symbol]: { ...timeData } }) : {};
   // console.log(data);
 
@@ -21,15 +29,22 @@ const StockHeader = ({ symbol, timeData }) => {
       <Text style={styles.symbol}>{data?.symbol}</Text>
       <Text style={styles.name}>{data?.name}</Text>
       <View style={styles.priceWrapper}>
-        <Text style={styles.price}>
-          {"$" + parseInt(data?.close).toFixed(2)}
-        </Text>
-        <Text style={styles.percent}>{changesPercentage.toFixed(2) + "%"}</Text>
+        <Text style={styles.price}>{"$" + Number(data?.close).toFixed(2)}</Text>
+        <View style={styles.percentWrapper(upDownIndication)}>
+          {upDownIndication === "down" ? (
+            <Ionicons name="arrow-down-outline" size={16} color="#a50e0f" />
+          ) : (
+            <Ionicons name="arrow-up-outline" size={16} color="#137333" />
+          )}
+          <Text style={styles.percent(upDownIndication)}>
+            {changesPercentage.toFixed(2) + "%"}
+          </Text>
+        </View>
         <Text style={styles.change}>
           {"$" +
-            (
-              parseInt(data?.close) - parseInt(timeData?.values[0]?.open)
-            ).toFixed(2)}
+            (Number(data?.close) - Number(timeData?.values[0]?.open)).toFixed(
+              2
+            )}
         </Text>
       </View>
     </View>
@@ -60,16 +75,26 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: COLORS.primary,
   },
-  percent: {
+  percentWrapper: (upDownIndication) => ({
+    flexDirection: "row",
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    height: 22,
+    alignSelf: "flex-end",
+    alignItems: "center",
+    alignContent: "center",
+    backgroundColor: upDownIndication === "down" ? "#fce8e6" : "#e6f4ea",
+    borderRadius: 6,
+    textAlignVertical: "bottom",
+  }),
+  percent: (upDownIndication) => ({
     fontFamily: FONT.regular,
-    fontSize: 16,
-    color: COLORS.tertiary,
-    paddingTop: 4,
-  },
+    color: upDownIndication === "down" ? "#a50e0f" : "#137333",
+  }),
   change: {
     fontFamily: FONT.regular,
     fontSize: 16,
     color: COLORS.gray,
-    paddingTop: 4,
+    alignSelf: "flex-end",
   },
 });

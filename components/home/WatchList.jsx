@@ -17,28 +17,30 @@ import useFetch from "../../hooks/useFetch";
 const WatchList = ({ symbols }) => {
   const router = useRouter();
 
-  // const { data, isLoading, error } = useFetch("rapidapi", "time_series", {
-  //   symbol: symbols.toString(),
-  //   interval: "1h",
-  //   outputsize: "7",
-  //   format: "json",
-  // });
-  // const newData = data
-  //   ? Object.entries(
-  //       symbols.length === 1 ? { [symbols.toString()]: { ...data } } : data
-  //     )
-  //   : [];
+  const { data, isLoading, error } = useFetch("rapidapi", "quote", {
+    symbol: symbols.toString(),
+    interval: "1day",
+    format: "json",
+  });
+  const newData = data
+    ? Object.entries(
+        symbols.length === 1 ? { [symbols.toString()]: { ...data } } : data
+      )
+    : [];
 
   // DUMMY VALUES FOR TESTING
-  const newData = Object.entries(dummyWatchList);
-  const isLoading = false;
-  const error = false;
+  // const newData = Object.entries(dummyWatchList);
+  // const isLoading = false;
+  // const error = false;
 
   useEffect(() => {
     if (error) {
       Alert.alert("There is an error: ", error);
     }
   }, [error]);
+
+  // console.log(symbols);
+
 
   return (
     <View style={styles.container}>
