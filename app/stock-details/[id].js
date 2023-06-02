@@ -61,9 +61,9 @@ const StockDetails = () => {
     return () => sub();
   }, []);
 
-  useEffect(() => {
-    refetch();
-  }, [activeTab]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [activeTab]);
 
   useEffect(() => {
     if (error) {
@@ -98,7 +98,7 @@ const StockDetails = () => {
             <ScreenHeaderBtn
               icon={"arrow-back-outline"}
               dimension={20}
-              handlePress={() => router.back()}
+              handlePress={() => router.push(`/home`)}
             />
           ),
           headerRight: () => (
@@ -127,6 +127,7 @@ const StockDetails = () => {
                   tabs={timeIntervals}
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
+                  refetch={refetch}
                 />
                 <StockChart timeData={data} />
               </>

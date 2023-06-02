@@ -4,52 +4,70 @@ import { StyleSheet } from "react-native";
 import { COLORS, FONT, SHADOWS, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
-const WatchListCard = ({ item, handleNavigate }) => {
+const WatchListCard = ({ item, handleNavigate, showDelete, deleteItem }) => {
   const upDownIndication = item?.percent_change > 0 ? "up" : "down";
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => handleNavigate(item)}
-    >
-      <TouchableOpacity style={styles.logoContainer}>
-        <Text style={styles.price}>{item?.symbol}</Text>
-      </TouchableOpacity>
+    <View style={styles.mainContainer}>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => handleNavigate(item)}
+      >
+        <TouchableOpacity style={styles.logoContainer}>
+          <Text style={styles.title}>{item?.symbol}</Text>
+        </TouchableOpacity>
 
-      <View style={styles.textContainer}>
-        <Text style={styles.price} numberOfLines={1}>
-          {item?.name}
-        </Text>
-        <Text style={styles.percent}>
-          {Number(item?.percent_change).toFixed(2) + "%"}
-          {"  "}
-          {"$" + Number(item?.change).toFixed(2)}
-        </Text>
-      </View>
-      {upDownIndication === "up" ? (
-        <Ionicons name="trending-up" size={36} color="#137333" />
-      ) : (
-        <Ionicons name="trending-down" size={36} color="#a50e0f" />
+        <View style={styles.textContainer}>
+          <Text style={styles.title} numberOfLines={1}>
+            {item?.name}
+          </Text>
+          <Text style={styles.percent}>
+            {Number(item?.percent_change).toFixed(2) + "%"}
+            {"  "}
+            {"$" + Number(item?.change).toFixed(2)}
+          </Text>
+        </View>
+        {upDownIndication === "up" ? (
+          <Ionicons name="trending-up" size={36} color="#137333" />
+        ) : (
+          <Ionicons name="trending-down" size={36} color="#a50e0f" />
+        )}
+        <View>
+          <Text style={styles.price}>
+            {"$" + Number(item?.close).toFixed(2)}
+          </Text>
+        </View>
+      </TouchableOpacity>
+      {showDelete && (
+        <TouchableOpacity style={styles.delete}>
+          <Ionicons
+            name="ios-trash"
+            size={20}
+            color="black"
+            onPress={() => deleteItem(item?.symbol)}
+          />
+        </TouchableOpacity>
       )}
-      <View>
-        <Text style={styles.price}>{"$" + Number(item?.close).toFixed(2)}</Text>
-      </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 export default WatchListCard;
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    flexDirection: "row",
+    borderRadius: SIZES.sm,
+    ...SHADOWS.md,
+    shadowColor: COLORS.white,
+    backgroundColor: "#FFF",
+  },
   container: {
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
     padding: SIZES.md,
-    borderRadius: SIZES.sm,
-    backgroundColor: "#FFF",
-    ...SHADOWS.md,
-    shadowColor: COLORS.white,
   },
   logoContainer: {
     width: 50,
@@ -64,16 +82,32 @@ const styles = StyleSheet.create({
     height: "70%",
   },
   textContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
     marginHorizontal: SIZES.md,
   },
+  title: {
+    fontSize: SIZES.md,
+    fontFamily: FONT.bold,
+    color: COLORS.primary,
+  },
   price: {
+    paddingLeft: 24,
     fontSize: SIZES.md,
     fontFamily: FONT.bold,
     color: COLORS.primary,
   },
   percent: {
     fontSize: SIZES.md,
-    fontFamily: FONT.light,
-    color: COLORS.primary,
+    fontFamily: FONT.regular,
+    color: COLORS.gray,
+  },
+  delete: {
+    justifyContent: "center",
+    alignContent: "center",
+    backgroundColor: "#ff726f",
+    paddingHorizontal: 6,
+    borderTopEndRadius: SIZES.sm,
+    borderBottomEndRadius: SIZES.sm,
   },
 });

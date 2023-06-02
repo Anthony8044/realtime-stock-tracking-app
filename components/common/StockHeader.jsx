@@ -10,14 +10,14 @@ const StockHeader = ({ symbol, timeData }) => {
     interval: "1min",
   });
   const changesPercentage = Math.abs(
-    ((Number(timeData?.values[timeData?.values?.length - 1]?.open) -
-      Number(timeData?.values[0]?.close)) /
-      Number(timeData?.values[timeData?.values?.length - 1]?.open)) *
+    ((Number(timeData?.values[0]?.close) -
+      Number(timeData?.values[timeData?.values?.length - 1]?.open)) /
+      Number(timeData?.values[0]?.close)) *
       100
   );
   const upDownIndication =
-    Number(timeData?.values[0]?.close) <
-    Number(timeData?.values[timeData?.values?.length - 1]?.open)
+    Number(timeData?.values[timeData?.values?.length - 1]?.open) <
+    Number(timeData?.values[0]?.close)
       ? "up"
       : "down";
   // console.log(upDownIndication);
@@ -42,9 +42,10 @@ const StockHeader = ({ symbol, timeData }) => {
         </View>
         <Text style={styles.change}>
           {"$" +
-            (Number(data?.close) - Number(timeData?.values[0]?.open)).toFixed(
-              2
-            )}
+            (
+              Number(data?.close) -
+              Number(timeData?.values[timeData?.values?.length - 1]?.open)
+            ).toFixed(2)}
         </Text>
       </View>
     </View>

@@ -13,7 +13,7 @@ const StockNewsCard = ({ item, index }) => {
       <TouchableOpacity style={styles.logoContainer}>
         <Image
           source={{ uri: item?.banner_image }}
-          resizeMode="contain"
+          resizeMode="cover"
           style={styles.logoImage}
         />
       </TouchableOpacity>
@@ -54,8 +54,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoImage: {
-    width: "70%",
-    height: "70%",
+    width: "100%",
+    height: "100%",
+    borderRadius: SIZES.md,
   },
   textContainer: {
     flex: 1,

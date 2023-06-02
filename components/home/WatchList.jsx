@@ -14,10 +14,10 @@ import { StyleSheet } from "react-native";
 import WatchListCard from "../common/WatchListCard";
 import useFetch from "../../hooks/useFetch";
 
-const WatchList = ({ symbols }) => {
+const WatchList = ({ symbols, showDelete, deleteItem }) => {
   const router = useRouter();
 
-  const { data, isLoading, error } = useFetch("rapidapi", "quote", {
+  const { data, isLoading, error, refetch } = useFetch("rapidapi", "quote", {
     symbol: symbols.toString(),
     interval: "1day",
     format: "json",
@@ -39,33 +39,26 @@ const WatchList = ({ symbols }) => {
     }
   }, [error]);
 
-  // console.log(symbols);
-
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Watchlist</Text>
-        <TouchableOpacity>
-          <Text style={styles.headerBtn}>See all</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.cardsContainer}>
-        {isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        ) : error ? (
-          <Text>Something went wrong</Text>
-        ) : (
-          newData.length > 0 &&
-          newData?.map((item) => (
+    <View style={styles.cardsContainer}>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      ) : error ? (
+        <Text>Something went wrong</Text>
+      ) : (
+        newData.length > 0 &&
+        newData
+          ?.sort((a, b) => Number(b[1]?.change) - Number(a[1]?.change))
+          ?.map((item) => (
             <WatchListCard
               item={item[1]}
               key={item[0]}
               handleNavigate={() => router.push(`/stock-details/${item[0]}`)}
+              showDelete={showDelete}
+              deleteItem={deleteItem}
             />
           ))
-        )}
-      </View>
+      )}
     </View>
   );
 };

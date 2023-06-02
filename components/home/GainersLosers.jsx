@@ -14,7 +14,7 @@ import { COLORS, FONT, SIZES } from "../../constants";
 import GainersLosersCard from "../common/GainersLosersCard";
 import useFetch from "../../hooks/useFetch";
 
-const GainersLosers = () => {
+const GainersLosers = ({ symbols }) => {
   const router = useRouter();
 
   // const { data, isLoading, error } = useFetch(
@@ -44,28 +44,22 @@ const GainersLosers = () => {
   const error = false;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Gainers and Losers</Text>
-        <TouchableOpacity>
-          <Text style={styles.headerBtn}>See all</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.cardsContainer}>
-        {isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        ) : error ? (
-          <Text>Something went wrong</Text>
-        ) : (
-          <FlatList
-            data={dataConcat}
-            renderItem={({ item }) => <GainersLosersCard item={item} />}
-            keyExtractor={(item, index) => index}
-            contentContainerStyle={{ columnGap: SIZES.md }}
-            horizontal
-          />
-        )}
-      </View>
+    <View style={styles.cardsContainer}>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      ) : error ? (
+        <Text>Something went wrong</Text>
+      ) : (
+        <FlatList
+          data={dataConcat}
+          renderItem={({ item }) => (
+            <GainersLosersCard item={item} symbols={symbols} />
+          )}
+          keyExtractor={(item, index) => index}
+          contentContainerStyle={{ columnGap: 6 }}
+          horizontal
+        />
+      )}
     </View>
   );
 };
@@ -73,9 +67,6 @@ const GainersLosers = () => {
 export default GainersLosers;
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: SIZES.xl,
-  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

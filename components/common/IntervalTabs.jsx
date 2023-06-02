@@ -19,7 +19,11 @@ function TabButton({ name, activeTab, onHandleSearchType }) {
   );
 }
 
-const IntervalTabs = ({ tabs, activeTab, setActiveTab }) => {
+const IntervalTabs = ({ tabs, activeTab, setActiveTab, refetch }) => {
+  const handleTabUpdate = (item) => {
+    setActiveTab(item);
+    refetch();
+  };
   return (
     <View style={styles.container}>
       <FlatList
@@ -30,7 +34,7 @@ const IntervalTabs = ({ tabs, activeTab, setActiveTab }) => {
           <TabButton
             name={item.time}
             activeTab={activeTab}
-            onHandleSearchType={() => setActiveTab(item)}
+            onHandleSearchType={() => handleTabUpdate(item)}
           />
         )}
         contentContainerStyle={{ columnGap: SIZES.sm / 2 }}
