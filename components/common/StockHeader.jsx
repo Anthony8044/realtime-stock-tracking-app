@@ -4,11 +4,7 @@ import useFetch from "../../hooks/useFetch";
 import { COLORS, FONT, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
-const StockHeader = ({ symbol, timeData }) => {
-  const { data, isLoading, error } = useFetch("rapidapi", "quote", {
-    symbol: symbol,
-    interval: "1min",
-  });
+const StockHeader = ({ symbol, name, close, timeData }) => {
   const changesPercentage = Math.abs(
     ((Number(timeData?.values[0]?.close) -
       Number(timeData?.values[timeData?.values?.length - 1]?.open)) /
@@ -26,10 +22,10 @@ const StockHeader = ({ symbol, timeData }) => {
 
   return (
     <View>
-      <Text style={styles.symbol}>{data?.symbol}</Text>
-      <Text style={styles.name}>{data?.name}</Text>
+      <Text style={styles.symbol}>{symbol}</Text>
+      <Text style={styles.name}>{name}</Text>
       <View style={styles.priceWrapper}>
-        <Text style={styles.price}>{"$" + Number(data?.close).toFixed(2)}</Text>
+        <Text style={styles.price}>{"$" + Number(close).toFixed(2)}</Text>
         <View style={styles.percentWrapper(upDownIndication)}>
           {upDownIndication === "down" ? (
             <Ionicons name="arrow-down-outline" size={16} color="#a50e0f" />
@@ -43,7 +39,7 @@ const StockHeader = ({ symbol, timeData }) => {
         <Text style={styles.change}>
           {"$" +
             (
-              Number(data?.close) -
+              Number(close) -
               Number(timeData?.values[timeData?.values?.length - 1]?.open)
             ).toFixed(2)}
         </Text>

@@ -4,7 +4,7 @@ import { LineChart } from "react-native-chart-kit";
 import { COLORS } from "../../constants";
 
 const StockChart = ({ timeData }) => {
-  const reversed = timeData.values.slice().reverse();
+  const reversed = timeData?.values?.slice()?.reverse();
 
   //   console.log("timeData: ", timeData);
   return (

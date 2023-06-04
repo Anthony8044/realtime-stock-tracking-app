@@ -62,6 +62,8 @@ const useFetch = (api, endpoint, query) => {
       const response = await axios.request(options);
       if (response.data?.code === 429) {
         setError(response.data?.message);
+      } else if (response.data?.code === 400) {
+        setError(response.data?.message);
       } else {
         setData(response.data);
         setIsLoading(false);

@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -12,17 +12,31 @@ import GainersLosers from "../../../components/home/GainersLosers";
 import { COLORS, FONT, SIZES } from "../../../constants";
 import WatchList from "../../../components/home/WatchList";
 import { auth, db } from "../../../firebase-config";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, collection, query, where } from "firebase/firestore";
 
 const HomeTabIndex = () => {
+  const router = useRouter();
   const [watchList, setWatchList] = useState([]);
-  // const userRef = doc(db, "users", auth.currentUser.uid);
+  const [watchListData, setWatchListData] = useState([]);
+
   useEffect(() => {
     const sub = onSnapshot(doc(db, "users", auth.currentUser.uid), (doc) => {
       setWatchList(doc.data()?.watchList);
     });
     return () => sub();
   }, []);
+
+  useEffect(() => {
+    if (watchList.length > 0) {
+      const sub = onSnapshot(
+        query(collection(db, "stocks"), where("symbol", "in", watchList)),
+        (querySnapshot) => {
+          setWatchListData(querySnapshot.docs.map((d) => d.data()));
+        }
+      );
+      return () => sub();
+    }
+  }, [watchList]);
 
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
@@ -47,21 +61,25 @@ const HomeTabIndex = () => {
           {/* GAINERS LOSERS */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Gainers and Losers</Text>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
               <Text style={styles.headerBtn}>See all</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <GainersLosers symbols={watchList} />
 
           {/* WATCHLIST */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Your Watchlist</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/portfolio")}>
               <Text style={styles.headerBtn}>See all</Text>
             </TouchableOpacity>
           </View>
-          {watchList.length > 0 && (
-            <WatchList symbols={watchList.slice(0, 3)} deleteItem={() => ""} />
+          {watchListData.length > 0 && (
+            <WatchList
+              symbols={watchList.slice(0, 3)}
+              deleteItem={() => ""}
+              watchListData={watchListData.slice(0, 3)}
+            />
           )}
         </View>
       </ScrollView>

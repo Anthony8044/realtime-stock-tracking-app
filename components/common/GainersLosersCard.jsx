@@ -88,12 +88,14 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   name: {
+    paddingVertical: 2,
     fontSize: 14,
     fontFamily: FONT.bold,
     color: COLORS.white,
     marginTop: SIZES.sm / 1.5,
   },
   price: {
+    paddingVertical: 6,
     fontSize: 20,
     fontFamily: FONT.bold,
     color: COLORS.tertiary,

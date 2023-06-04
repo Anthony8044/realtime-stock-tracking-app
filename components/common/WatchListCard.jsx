@@ -5,25 +5,27 @@ import { COLORS, FONT, SHADOWS, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
 const WatchListCard = ({ item, handleNavigate, showDelete, deleteItem }) => {
-  const upDownIndication = item?.percent_change > 0 ? "up" : "down";
+  const { name, symbol, change, percentChange, price } = item;
+  const upDownIndication = percentChange > 0 ? "up" : "down";
+
   return (
     <View style={styles.mainContainer}>
       <TouchableOpacity
         style={styles.container}
-        onPress={() => handleNavigate(item)}
+        onPress={() => handleNavigate(symbol)}
       >
         <TouchableOpacity style={styles.logoContainer}>
-          <Text style={styles.title}>{item?.symbol}</Text>
+          <Text style={styles.title}>{symbol}</Text>
         </TouchableOpacity>
 
         <View style={styles.textContainer}>
           <Text style={styles.title} numberOfLines={1}>
-            {item?.name}
+            {name}
           </Text>
           <Text style={styles.percent}>
-            {Number(item?.percent_change).toFixed(2) + "%"}
+            {Number(percentChange).toFixed(2) + "%"}
             {"  "}
-            {"$" + Number(item?.change).toFixed(2)}
+            {"$" + Number(change).toFixed(2)}
           </Text>
         </View>
         {upDownIndication === "up" ? (
@@ -32,9 +34,7 @@ const WatchListCard = ({ item, handleNavigate, showDelete, deleteItem }) => {
           <Ionicons name="trending-down" size={36} color="#a50e0f" />
         )}
         <View>
-          <Text style={styles.price}>
-            {"$" + Number(item?.close).toFixed(2)}
-          </Text>
+          <Text style={styles.price}>{"$" + Number(price).toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
       {showDelete && (
@@ -43,7 +43,7 @@ const WatchListCard = ({ item, handleNavigate, showDelete, deleteItem }) => {
             name="ios-trash"
             size={20}
             color="black"
-            onPress={() => deleteItem(item?.symbol)}
+            onPress={() => deleteItem(symbol)}
           />
         </TouchableOpacity>
       )}
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.md,
     shadowColor: COLORS.white,
     backgroundColor: "#FFF",
+    marginBottom: SIZES.sm,
   },
   container: {
     flex: 1,
