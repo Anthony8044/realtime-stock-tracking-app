@@ -32,6 +32,14 @@ const isOutOfDate = (itemDate) => {
   return newDate;
 };
 
+const isOutOfDateArray = (itemArray) => {
+  const oneHourAgo = moment().subtract(1, "hours");
+  const newArray = itemArray.filter((item) =>
+    moment(item.lastUpdate.toDate()).tz("Asia/Hong_Kong").isBefore(oneHourAgo)
+  );
+  return newArray.length > 0 ? true : false;
+};
+
 const watchListObj = (data, rtData) => {
   const dataObj = {
     symbol: rtData?.symbol,
@@ -52,4 +60,4 @@ const watchListObj = (data, rtData) => {
   return dataObj;
 };
 
-export { onShare, isOutOfDate, watchListObj };
+export { onShare, isOutOfDate, watchListObj, isOutOfDateArray };

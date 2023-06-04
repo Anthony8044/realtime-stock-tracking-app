@@ -16,10 +16,14 @@ import { StyleSheet } from "react-native";
 import WatchListCard from "../common/WatchListCard";
 import useFetch from "../../hooks/useFetch";
 import useFetchWatchList from "../../hooks/useFetchWatchList";
+import { db } from "../../firebase-config";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
+import { isOutOfDateArray } from "../../hooks/common";
 
 const WatchList = ({ symbols, showDelete, deleteItem, watchListData }) => {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const stocksRef = collection(db, "stocks");
 
   const { data, isLoading, error, refetch } = useFetchWatchList(
     "rapidapi",
@@ -42,6 +46,28 @@ const WatchList = ({ symbols, showDelete, deleteItem, watchListData }) => {
       Alert.alert("There is an error: ", error);
     }
   }, [error]);
+
+  const refreshFirebaseData = async () => {
+    // Make sure symbols has length > 1
+    const w = query(stocksRef, where("symbol", "in", symbols));
+    const querySnapshot = await getDocs(w);
+
+    if (!querySnapshot.empty) {
+      const stocksData = querySnapshot.docs.map((d) => d.data());
+
+      // console.log("symbols: ", symbols);
+      // console.log("outOfDate: ", isOutOfDateArray(stocksData));
+      if (isOutOfDateArray(stocksData)) {
+        // fetch api and update the firestore
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (symbols.length > 0) {
+      refreshFirebaseData();
+    }
+  }, [symbols]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
