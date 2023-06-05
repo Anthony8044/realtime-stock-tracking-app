@@ -54,21 +54,17 @@ const HomeTabIndex = () => {
         }}
       />
 
+      <Welcome />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1, padding: SIZES.md }}>
-          <Welcome />
-
           {/* GAINERS LOSERS */}
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <Text style={styles.headerTitle}>Gainers and Losers</Text>
-            {/* <TouchableOpacity>
-              <Text style={styles.headerBtn}>See all</Text>
-            </TouchableOpacity> */}
           </View>
-          <GainersLosers symbols={watchList} />
+          <GainersLosers symbols={watchList} /> */}
 
           {/* WATCHLIST */}
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <Text style={styles.headerTitle}>Your Watchlist</Text>
             <TouchableOpacity onPress={() => router.push("/(tabs)/portfolio")}>
               <Text style={styles.headerBtn}>See all</Text>
@@ -80,7 +76,7 @@ const HomeTabIndex = () => {
               deleteItem={() => ""}
               watchListData={watchListData.slice(0, 3)}
             />
-          )}
+          )} */}
         </View>
       </ScrollView>
     </View>
