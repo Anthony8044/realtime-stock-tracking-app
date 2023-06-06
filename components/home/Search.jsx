@@ -1,14 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   TouchableOpacity,
-  Image,
   SafeAreaView,
-  StatusBar,
   Modal,
+  Text,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { TextInput } from "react-native-gesture-handler";
 import { StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES } from "../../constants/theme";
 import { AntDesign } from "@expo/vector-icons";
@@ -20,42 +17,51 @@ import { ALGOLIA_APP_API, ALGOLIA_API_KEY } from "@env";
 
 const searchClient = algoliasearch(ALGOLIA_APP_API, ALGOLIA_API_KEY);
 
-const Welcome = () => {
-  const router = useRouter();
+const Search = ({ userDetails }) => {
+  const [showModal, setShowModal] = useState(userDetails ?? false);
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
-        <InstantSearch searchClient={searchClient} indexName="all-stocks">
-          <SearchBox />
-          <Modal animationType="slide" onRequestClose={() => {}}>
-            <SafeAreaView style={{ marginTop: 48 }}>
-              <InfiniteHits />
-            </SafeAreaView>
-          </Modal>
-
-          {/* <View style={styles.searchContainer}>
-          <View style={styles.searchWrapper}>
-            <TextInput
-              style={styles.searchInput}
-              onChangeText={(value) => refine(value)}
-              value={currentRefinement}
-              placeholder="Search"
-            />
-          </View>
-          <TouchableOpacity style={styles.searchBtn} onPress={() => {}}>
-            <AntDesign name="search1" size={24} color={COLORS.white} />
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <View style={styles.searchWrapper}>
+          <TouchableOpacity
+            style={styles.searchInput}
+            onPress={() => setShowModal(true)}
+          >
+            <Text style={{ color: COLORS.gray }}>Search</Text>
           </TouchableOpacity>
-        </View> */}
-        </InstantSearch>
+        </View>
+        <TouchableOpacity
+          style={styles.searchBtn}
+          onPress={() => setShowModal(true)}
+        >
+          <AntDesign name="search1" size={24} color={COLORS.white} />
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+      <Modal
+        animationType="fade"
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+        onDismiss={() => setShowModal(false)}
+      >
+        <SafeAreaView>
+          <InstantSearch searchClient={searchClient} indexName="all-stocks">
+            <SearchBox setShowModal={setShowModal} userDetails={userDetails} />
+            <InfiniteHits setShowModal={setShowModal} />
+          </InstantSearch>
+        </SafeAreaView>
+      </Modal>
+    </View>
   );
 };
 
-export default Welcome;
+export default Search;
 
 const styles = StyleSheet.create({
+  container: {
+    // flex: 1,
+    backgroundColor: COLORS.white,
+  },
   searchContainer: {
     width: "100%",
     justifyContent: "center",
@@ -63,6 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: SIZES.lg,
     height: 50,
+    paddingHorizontal: "5%",
   },
   searchWrapper: {
     flex: 1,
@@ -74,10 +81,12 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   searchInput: {
+    flex: 1,
     fontFamily: FONT.regular,
     width: "100%",
     height: "100%",
     paddingHorizontal: SIZES.md,
+    justifyContent: "center",
   },
   searchBtn: {
     width: 50,
@@ -91,13 +100,5 @@ const styles = StyleSheet.create({
     width: "50%",
     height: "50%",
     tintColor: COLORS.white,
-  },
-  safe: {
-    flex: 1,
-    backgroundColor: "#252b33",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
   },
 });

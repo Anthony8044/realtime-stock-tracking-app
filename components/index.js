@@ -1,5 +1,5 @@
 // home screen
-import Welcome from "./home/Welcome";
+import Search from "./home/Search";
 import WatchList from "./home/WatchList";
 import GainersLosers from "./home/GainersLosers";
 
@@ -12,9 +12,11 @@ import IntervalTabs from "./common/IntervalTabs";
 import StockChart from "./common/StockChart";
 import StockNews from "./common/StockNews";
 import StockNewsCard from "./common/StockNewsCard";
+import PortfolioHeader from "./common/PortfolioHeader";
+import SkeletonChooser from "./common/SkeletonChooser";
 
 export {
-  Welcome,
+  Search,
   WatchList,
   GainersLosers,
   WatchListCard,
@@ -25,4 +27,6 @@ export {
   StockChart,
   StockNews,
   StockNewsCard,
+  PortfolioHeader,
+  SkeletonChooser,
 };

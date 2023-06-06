@@ -1,10 +1,12 @@
 import { Tabs } from "expo-router";
-import { Text } from "react-native";
+import { COLORS, FONT } from "../../constants";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 
 const TabsLayout = () => {
   return (
     <Tabs
       screenOptions={{
+        tabBarStyle: { height: 60 },
         headerShown: false,
       }}
     >
@@ -12,21 +14,60 @@ const TabsLayout = () => {
         name="home"
         options={{
           title: "Dashboard",
-          tabBarIcon: () => <Text>🏠</Text>,
+          tabBarLabelStyle: {
+            fontFamily: FONT.regular,
+            paddingBottom: 4,
+            fontSize: 12,
+          },
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: COLORS.gray,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="ios-home"
+              size={28}
+              color={focused ? COLORS.primary : COLORS.gray}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="portfolio"
         options={{
           title: "Portfolio",
-          tabBarIcon: () => <Text>📈</Text>,
+          tabBarLabelStyle: {
+            fontFamily: FONT.regular,
+            paddingBottom: 4,
+            fontSize: 12,
+          },
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: COLORS.gray,
+          tabBarIcon: ({ focused }) => (
+            <FontAwesome5
+              name="clipboard-list"
+              size={28}
+              color={focused ? COLORS.primary : COLORS.gray}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
-          tabBarIcon: () => <Text>⚙️</Text>,
+          title: "Profile",
+          tabBarLabelStyle: {
+            fontFamily: FONT.regular,
+            paddingBottom: 4,
+            fontSize: 12,
+          },
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: COLORS.gray,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="person"
+              size={28}
+              color={focused ? COLORS.primary : COLORS.gray}
+            />
+          ),
         }}
       />
     </Tabs>

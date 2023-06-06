@@ -22,7 +22,9 @@ const GainersLosersCard = ({ item, symbols }) => {
         <TouchableOpacity style={styles.logoContainer}>
           <Text style={styles.symbol}>{item?.symbol}</Text>
         </TouchableOpacity>
-        {symbols.filter((a) => a === item?.symbol).length > 0 ? (
+        {symbols &&
+        symbols?.length > 0 &&
+        symbols.filter((a) => a === item?.symbol).length > 0 ? (
           <Ionicons name="ios-star-sharp" size={28} color={COLORS.tertiary} />
         ) : (
           <Ionicons name="ios-star-outline" size={28} color={COLORS.tertiary} />
@@ -75,8 +77,10 @@ const styles = StyleSheet.create({
     shadowColor: COLORS.gray,
   },
   logoContainer: {
-    width: 44,
+    // width: 44,
+    minWidth: 44,
     height: 44,
+    paddingHorizontal: 4,
     backgroundColor: COLORS.white,
     borderRadius: SIZES.md,
     justifyContent: "center",

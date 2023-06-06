@@ -25,9 +25,9 @@ const Home = () => {
   }, [segments, navigationState?.key, initialized]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
-      {!navigationState?.key ? <Text>LOADING...</Text> : <></>}
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+        {!navigationState?.key ? <Text>LOADING...</Text> : <></>}
+      </SafeAreaView>
   );
 };
 

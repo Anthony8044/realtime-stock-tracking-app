@@ -13,45 +13,47 @@ import { dummyGainer, dummyLoser } from "../../dummyData";
 import { COLORS, FONT, SIZES } from "../../constants";
 import GainersLosersCard from "../common/GainersLosersCard";
 import useFetch from "../../hooks/useFetch";
+import SkeletonChooser from "../common/SkeletonChooser";
 
 const GainersLosers = ({ symbols }) => {
   const router = useRouter();
 
-  // const { data, isLoading, error } = useFetch(
-  //   "financialmodelingprep",
-  //   "stock_market/losers"
-  // );
-  // const {
-  //   data: dataTwo,
-  //   isLoading: isLoadingTwo,
-  //   error: errorTwo,
-  // } = useFetch("financialmodelingprep", "stock_market/gainers");
-  // const dataConcat = data
-  // .concat(dataTwo)
-  // .sort(
-  //   (a, b) => Math.abs(b.changesPercentage) - Math.abs(a.changesPercentage)
-  // )
-  // .slice(0, 10);
-
-  // DUMMY VALUES FOR TESTING
-  const dataConcat = dummyGainer
-    .concat(dummyLoser)
+  const { data, isLoading, error } = useFetch(
+    "financialmodelingprep",
+    "stock_market/losers"
+  );
+  const {
+    data: dataTwo,
+    isLoading: isLoadingTwo,
+    error: errorTwo,
+  } = useFetch("financialmodelingprep", "stock_market/gainers");
+  const dataConcat = data
+    .concat(dataTwo)
     .sort(
       (a, b) => Math.abs(b.changesPercentage) - Math.abs(a.changesPercentage)
     )
     .slice(0, 10);
-  const isLoading = false;
-  const error = false;
+
+  // DUMMY VALUES FOR TESTING
+  // const dataConcat = dummyGainer
+  //   .concat(dummyLoser)
+  //   .sort(
+  //     (a, b) => Math.abs(b.changesPercentage) - Math.abs(a.changesPercentage)
+  //   )
+  //   .slice(0, 10);
+  // const isLoading = false;
+  // const error = false;
 
   return (
     <View style={styles.cardsContainer}>
       {isLoading ? (
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <SkeletonChooser type={"gainerLosers"} />
       ) : error ? (
         <Text>Something went wrong</Text>
       ) : (
         <FlatList
           data={dataConcat}
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <GainersLosersCard item={item} symbols={symbols} />
           )}

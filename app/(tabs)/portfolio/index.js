@@ -1,23 +1,26 @@
 import { Stack } from "expo-router";
 import {
-  arrayRemove,
   collection,
   doc,
+  limit,
   onSnapshot,
+  orderBy,
   query,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { SafeAreaView, ScrollView, Text } from "react-native";
 import { auth, db } from "../../../firebase-config";
 import { COLORS, FONT, SIZES } from "../../../constants";
-import { WatchList } from "../../../components";
+import {
+  PortfolioHeader,
+  SkeletonChooser,
+  WatchList,
+} from "../../../components";
 
 const PortfolioTabIndex = () => {
-  const [watchList, setWatchList] = useState([]);
+  const [watchList, setWatchList] = useState(false);
   const [watchListData, setWatchListData] = useState([]);
-  const userRef = doc(db, "users", auth.currentUser.uid);
 
   useEffect(() => {
     const sub = onSnapshot(doc(db, "users", auth.currentUser.uid), (doc) => {
@@ -27,29 +30,26 @@ const PortfolioTabIndex = () => {
   }, []);
 
   useEffect(() => {
-    if (watchList.length > 0) {
+    if (watchList && watchList?.length > 0) {
       const sub = onSnapshot(
-        query(collection(db, "stocks"), where("symbol", "in", watchList)),
+        query(
+          collection(db, "stocks"),
+          where("symbol", "in", watchList),
+          orderBy("percentChange", "desc"),
+          limit(10)
+        ),
         (querySnapshot) => {
           setWatchListData(querySnapshot.docs.map((d) => d.data()));
         }
       );
       return () => sub();
+    } else {
+      setWatchListData([]);
     }
   }, [watchList]);
 
-  const deleteItem = async (item) => {
-    try {
-      await updateDoc(userRef, {
-        watchList: arrayRemove(item),
-      });
-    } catch (error) {
-      console.log("Could'nt delete");
-    }
-  };
-
   return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
@@ -63,20 +63,44 @@ const PortfolioTabIndex = () => {
           },
         }}
       />
+      {watchListData && watchListData?.length > 0 && (
+        <PortfolioHeader watchListData={watchListData} />
+      )}
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ flex: 1, padding: SIZES.md }}>
-          {watchListData.length > 0 && (
-            <WatchList
-              symbols={watchList}
-              watchListData={watchListData}
-              showDelete={true}
-              deleteItem={deleteItem}
-            />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{
+          flex: 1,
+          width: "100%",
+          paddingHorizontal: "5%",
+        }}
+      >
+        {watchList === false && <SkeletonChooser type={"watchList"} />}
+        {watchListData && watchListData?.length > 0 && (
+          <WatchList
+            symbols={watchList}
+            watchListData={watchListData}
+            showDelete={true}
+            maxNumber={10}
+          />
+        )}
+        {watchList !== false &&
+          watchListData &&
+          watchListData?.length === 0 && (
+            <Text
+              style={{
+                paddingTop: "50%",
+                padding: 6,
+                fontFamily: FONT.regular,
+                fontSize: 22,
+                textAlign: "center",
+              }}
+            >
+              Start by adding stocks to your watchlist
+            </Text>
           )}
-        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

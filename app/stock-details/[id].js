@@ -12,11 +12,12 @@ import { COLORS, FONT, SIZES } from "../../constants";
 import {
   IntervalTabs,
   ScreenHeaderBtn,
+  SkeletonChooser,
   StockChart,
   StockHeader,
   StockNews,
 } from "../../components";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "../../firebase-config";
 import {
   Timestamp,
@@ -30,6 +31,7 @@ import {
 } from "firebase/firestore";
 import useFetch from "../../hooks/useFetch";
 import { isOutOfDate, onShare, watchListObj } from "../../hooks/common";
+import { RefreshControl } from "react-native";
 
 const timeIntervals = [
   { time: "1 Day", params: { interval: "15min", outputsize: "30" } },
@@ -42,6 +44,7 @@ const StockDetails = () => {
   const params = useSearchParams();
   const router = useRouter();
 
+  const [refreshing, setRefreshing] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
   const [activeTab, setActiveTab] = useState(timeIntervals[0]);
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -51,6 +54,7 @@ const StockDetails = () => {
     data: rtData,
     isLoading: rtIsLoading,
     error: rtError,
+    refetch: rtRefetch,
   } = useFetch("rapidapi", "quote", {
     symbol: params.id,
     interval: "1min",
@@ -59,7 +63,10 @@ const StockDetails = () => {
   const { data, isLoading, error, refetch } = useFetch(
     "rapidapi",
     "time_series",
-    { ...activeTab.params, symbol: params.id }
+    {
+      ...activeTab.params,
+      symbol: params.id,
+    }
   );
 
   useEffect(() => {
@@ -73,9 +80,14 @@ const StockDetails = () => {
     return () => sub();
   }, []);
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [activeTab]);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    refetch();
+    rtRefetch();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -119,10 +131,10 @@ const StockDetails = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <Stack.Screen
         options={{
-          headerStyle: { backgroundColor: COLORS.lightWhite },
+          headerStyle: { backgroundColor: COLORS.white },
           headerShown: true,
           headerShadowVisible: false,
           headerBackVisible: false,
@@ -145,14 +157,21 @@ const StockDetails = () => {
           headerTitle: "",
         }}
       />
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <SkeletonChooser type={"stockDetails"} />
         ) : error ? (
-          <Text>Something went wrong</Text>
+          <Text>
+            Exceeded api call limit. Please wait and scroll down to refresh.
+          </Text>
         ) : (
           <>
-            {Object.keys(data).length != 0 && Object.keys(rtData) != 0 && (
+            {Object.keys(data)?.length != 0 && Object.keys(rtData) != 0 ? (
               <>
                 <StockHeader
                   symbol={rtData?.symbol}
@@ -168,6 +187,8 @@ const StockDetails = () => {
                 />
                 <StockChart timeData={data} />
               </>
+            ) : (
+              <SkeletonChooser type={"stockDetails"} />
             )}
           </>
         )}
@@ -179,6 +200,18 @@ const StockDetails = () => {
             {isFollowed ? "Unfollow" : "Follow"}
           </Text>
         </TouchableOpacity>
+        <Text
+          style={{
+            fontFamily: FONT.bold,
+            fontSize: 22,
+            color: COLORS.primary,
+            marginBottom: 4,
+            marginTop: 16,
+            paddingHorizontal: "5%",
+          }}
+        >
+          News
+        </Text>
         <StockNews symbol={params.id} />
       </ScrollView>
     </SafeAreaView>

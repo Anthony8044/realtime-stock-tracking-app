@@ -6,7 +6,7 @@ import {
   FINANCIALMODELING_API_KEY,
 } from "@env";
 
-const useFetch = (api, endpoint, query) => {
+const useFetch = (api, endpoint, query, checkApi = false) => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,18 +43,6 @@ const useFetch = (api, endpoint, query) => {
       return { data, isLoading, error, refetch };
   }
 
-  //   const options = {
-  //     method: "GET",
-  //     url: `https://www.alphavantage.co/query?`,
-  //     params: { ...query, apikey: ALPHA_VANTAGE_KEY },
-  //   };
-
-  //   const options = {
-  //     method: "GET",
-  //     url: `https://financialmodelingprep.com/api/v3/${endpoint}`,
-  //     params: { apikey: FINANCIALMODELING_API_KEY },
-  //   };
-
   const fetchData = async () => {
     setIsLoading(true);
 
@@ -65,13 +53,13 @@ const useFetch = (api, endpoint, query) => {
       } else if (response.data?.code === 400) {
         setError(response.data?.message);
       } else {
-        setData(response.data);
+        setData(checkApi ? response : response.data);
         setIsLoading(false);
       }
-      console.log("API request from: ", api);
+      // console.log("API request from: ", api);
     } catch (error) {
       setError(error?.message ?? error);
-      console.log("error: ", error);
+      // console.log("error: ", error);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +70,8 @@ const useFetch = (api, endpoint, query) => {
   }, []);
 
   const refetch = () => {
-    // setIsLoading(true);
+    setIsLoading(true);
+    setError(null);
     fetchData();
   };
 

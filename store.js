@@ -4,18 +4,20 @@ import {
   signOut,
   PhoneAuthProvider,
   signInWithCredential,
+  getAdditionalUserInfo,
 } from "firebase/auth/react-native";
 import { auth, db } from "./firebase-config";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export const AuthStore = new Store({
   isLoggedIn: false,
   initialized: false,
   user: null,
+  userDetails: "",
 });
 
 const unsub = onAuthStateChanged(auth, (user) => {
-  console.log("onAuthStateChange", user);
+  // console.log("onAuthStateChange", user);
   AuthStore.update((store) => {
     store.user = user;
     store.isLoggedIn = user ? true : false;
@@ -30,11 +32,14 @@ export const phoneSignIn = async (verificationId, smsCode) => {
     AuthStore.update((store) => {
       store.user = resp.user;
       store.isLoggedIn = resp.user ? true : false;
+      store.userDetails = getAdditionalUserInfo(resp);
     });
 
-    const usersSnapshot = doc(db, "users", auth.currentUser.uid);
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+
     // Create user in firestore for the first time if user doesnt already exsist
-    if (auth?.currentUser && usersSnapshot.id != auth.currentUser.uid) {
+    if (!userSnap.exists()) {
       try {
         await setDoc(doc(db, "users", auth.currentUser.uid), {
           userId: auth.currentUser.uid,

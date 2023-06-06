@@ -1,77 +1,46 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  RefreshControl,
-} from "react-native";
+import { ScrollView, RefreshControl } from "react-native";
 
 import { useRouter } from "expo-router";
-import { dummyWatchList } from "../../dummyData";
 import { COLORS, FONT, SIZES } from "../../constants";
 import { StyleSheet } from "react-native";
 import WatchListCard from "../common/WatchListCard";
-import useFetch from "../../hooks/useFetch";
-import useFetchWatchList from "../../hooks/useFetchWatchList";
 import { db } from "../../firebase-config";
-import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
-import { isOutOfDateArray } from "../../hooks/common";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { fetchAndUpdate, isOutOfDateArray } from "../../hooks/common";
 
-const WatchList = ({ symbols, showDelete, deleteItem, watchListData }) => {
+const WatchList = ({
+  symbols,
+  showDelete,
+  watchListData,
+  maxNumber,
+}) => {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const stocksRef = collection(db, "stocks");
 
-  const { data, isLoading, error, refetch } = useFetchWatchList(
-    "rapidapi",
-    "quote",
-    symbols
-  );
-  // const newData = data
-  //   ? Object.entries(
-  //       symbols.length === 1 ? { [symbols.toString()]: { ...data } } : data
-  //     )
-  //   : [];
-
-  // DUMMY VALUES FOR TESTING
-  // const newData = Object.entries(dummyWatchList);
-  // const isLoading = false;
-  // const error = false;
-
-  useEffect(() => {
-    if (error) {
-      Alert.alert("There is an error: ", error);
-    }
-  }, [error]);
-
   const refreshFirebaseData = async () => {
-    // Make sure symbols has length > 1
     const w = query(stocksRef, where("symbol", "in", symbols));
     const querySnapshot = await getDocs(w);
 
     if (!querySnapshot.empty) {
       const stocksData = querySnapshot.docs.map((d) => d.data());
 
-      // console.log("symbols: ", symbols);
-      // console.log("outOfDate: ", isOutOfDateArray(stocksData));
       if (isOutOfDateArray(stocksData)) {
-        // fetch api and update the firestore
+        // console.log("is out of date");
+        fetchAndUpdate(symbols);
       }
     }
   };
-
   useEffect(() => {
-    if (symbols.length > 0) {
+    if (symbols && symbols.length > 0) {
       refreshFirebaseData();
     }
-  }, [symbols]);
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    refetch();
+    fetchAndUpdate(symbols);
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -84,22 +53,19 @@ const WatchList = ({ symbols, showDelete, deleteItem, watchListData }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      {isLoading ? (
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      ) : error ? (
-        <Text>Something went wrong</Text>
-      ) : (
-        watchListData.length > 0 &&
-        watchListData.map((item) => (
-          <WatchListCard
-            item={item}
-            key={item.symbol}
-            handleNavigate={() => router.push(`/stock-details/${item.symbol}`)}
-            showDelete={showDelete}
-            deleteItem={deleteItem}
-          />
-        ))
-      )}
+      {watchListData.length > 0 &&
+        watchListData
+          .slice(0, maxNumber)
+          .map((item) => (
+            <WatchListCard
+              item={item}
+              key={item.symbol}
+              handleNavigate={() =>
+                router.push(`/stock-details/${item.symbol}`)
+              }
+              showDelete={showDelete}
+            />
+          ))}
     </ScrollView>
   );
 };

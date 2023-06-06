@@ -11,11 +11,13 @@ const StockNewsCard = ({ item, index }) => {
       key={index}
     >
       <TouchableOpacity style={styles.logoContainer}>
-        <Image
-          source={{ uri: item?.banner_image }}
-          resizeMode="cover"
-          style={styles.logoImage}
-        />
+        {item?.banner_image && (
+          <Image
+            source={{ uri: item?.banner_image }}
+            resizeMode="cover"
+            style={styles.logoImage}
+          />
+        )}
       </TouchableOpacity>
 
       <View style={styles.textContainer}>

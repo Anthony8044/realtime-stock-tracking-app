@@ -5,6 +5,17 @@
       "bundler": "metro"
     },
     "name": "realtime-stock-tracking-app",
-    "slug": "realtime-stock-tracking-app"
+    "slug": "realtime-stock-tracking-app",
+    "extra": {
+      "eas": {
+        "projectId": "ed17be24-e0f2-4861-af81-0a768a209ac6"
+      }
+    },
+    "android": {
+      "package": "com.anthony8044.realtimestocktrackingapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.anthony8044.realtimestocktrackingapp"
+    }
   }
 }

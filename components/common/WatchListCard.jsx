@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import { StyleSheet } from "react-native";
 import { COLORS, FONT, SHADOWS, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
+import { deleteWatchlist } from "../../hooks/common";
 
-const WatchListCard = ({ item, handleNavigate, showDelete, deleteItem }) => {
+const WatchListCard = ({ item, handleNavigate, showDelete }) => {
   const { name, symbol, change, percentChange, price } = item;
   const upDownIndication = percentChange > 0 ? "up" : "down";
 
@@ -38,13 +39,11 @@ const WatchListCard = ({ item, handleNavigate, showDelete, deleteItem }) => {
         </View>
       </TouchableOpacity>
       {showDelete && (
-        <TouchableOpacity style={styles.delete}>
-          <Ionicons
-            name="ios-trash"
-            size={20}
-            color="black"
-            onPress={() => deleteItem(symbol)}
-          />
+        <TouchableOpacity
+          style={styles.delete}
+          onPress={() => deleteWatchlist(symbol)}
+        >
+          <Ionicons name="ios-trash" size={20} color="black" />
         </TouchableOpacity>
       )}
     </View>

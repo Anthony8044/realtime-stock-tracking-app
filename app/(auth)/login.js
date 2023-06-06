@@ -2,7 +2,9 @@ import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Alert,
+  Dimensions,
   KeyboardAvoidingView,
+  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -11,6 +13,7 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { phoneSignIn } from "../../store";
+import { COLORS, FONT, SIZES } from "../../constants";
 
 const captchaUrl = "https://synpulse8-hiring-challenge.web.app/";
 
@@ -23,7 +26,7 @@ const Login = () => {
 
   const onGetMessage = async (event) => {
     const message = event.nativeEvent.data;
-    console.log(message);
+    // console.log(message);
     switch (message) {
       case "DOMLoaded":
         return;
@@ -45,7 +48,7 @@ const Login = () => {
   };
 
   const handlePhoneSubmit = (phone) => {
-    console.log("+852" + phoneRef.current);
+    // console.log("+852" + phoneRef.current);
     // HK phone number validator
     if (/^[0-9]{8}$/.test(phone)) {
       setStep("phoneSubmitted");
@@ -78,6 +81,8 @@ const Login = () => {
           enabled
           style={{ width: "100%" }}
         >
+          <Text style={styles.appTitle}>Realtime Stocks Tracking App</Text>
+          <Text style={styles.title}>Sign In</Text>
           <Text style={styles.label}>Enter Mobile Number</Text>
           <View style={styles.inputContainer}>
             <View style={styles.inputFlag}>
@@ -85,7 +90,7 @@ const Login = () => {
             </View>
             <View style={styles.inputWrapper}>
               <TextInput
-                placeholder="1111 1111"
+                placeholder="Input phone number..."
                 nativeID="phone"
                 keyboardType="number-pad"
                 onChangeText={(text) => {
@@ -105,13 +110,19 @@ const Login = () => {
       )}
 
       {step === "phoneSubmitted" && (
-        <WebView
-          injectedJavaScript={`getToken('${"+852" + phoneRef.current}')`}
-          source={{ uri: captchaUrl }}
-          onMessage={onGetMessage}
-          cacheEnabled={false}
-          incognito={true}
-        />
+        <SafeAreaView>
+          <WebView
+            style={{
+              width: Dimensions.get("window").width,
+              height: Dimensions.get("window").height,
+            }}
+            injectedJavaScript={`getToken('${"+852" + phoneRef.current}')`}
+            source={{ uri: captchaUrl }}
+            onMessage={onGetMessage}
+            cacheEnabled={false}
+            incognito={true}
+          />
+        </SafeAreaView>
       )}
 
       {step === "promptSmsCode" && (
@@ -120,6 +131,8 @@ const Login = () => {
           enabled
           style={{ width: "100%" }}
         >
+          <Text style={styles.appTitle}>Realtime Stocks Tracking App</Text>
+          <Text style={styles.title}>One-time password</Text>
           <Text style={styles.label}>Enter OTP</Text>
           <View style={styles.inputContainer}>
             <View style={styles.inputWrapper}>
@@ -159,10 +172,25 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
     alignItems: "center",
     width: "100%",
     paddingHorizontal: "5%",
+    backgroundColor: COLORS.gray2,
+  },
+  appTitle: {
+    fontSize: 40,
+    fontFamily: FONT.bold,
+    textAlign: "center",
+    paddingTop: "30%",
+    paddingBottom: "20%",
+    color: "#312651",
+  },
+  title: {
+    fontSize: 34,
+    fontFamily: FONT.semiBold,
+    marginBottom: 20,
+    color: "#312651",
   },
   label: {
     fontSize: 24,
