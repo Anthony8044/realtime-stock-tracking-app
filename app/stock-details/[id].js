@@ -1,6 +1,5 @@
 import { Stack, useRouter, useSearchParams } from "expo-router";
 import {
-  ActivityIndicator,
   Alert,
   SafeAreaView,
   ScrollView,
@@ -20,7 +19,6 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { auth, db } from "../../firebase-config";
 import {
-  Timestamp,
   arrayRemove,
   arrayUnion,
   doc,
@@ -50,6 +48,7 @@ const StockDetails = () => {
   const userRef = doc(db, "users", auth.currentUser.uid);
   const stocksRef = doc(db, "stocks", params.id);
 
+  // Realtime stock data quote
   const {
     data: rtData,
     isLoading: rtIsLoading,
@@ -60,6 +59,7 @@ const StockDetails = () => {
     interval: "1min",
   });
 
+  // Stock time series api based on the time intervals
   const { data, isLoading, error, refetch } = useFetch(
     "rapidapi",
     "time_series",

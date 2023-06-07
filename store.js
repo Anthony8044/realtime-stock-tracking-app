@@ -16,6 +16,7 @@ export const AuthStore = new Store({
   userDetails: "",
 });
 
+// Create state for the user and auth state
 const unsub = onAuthStateChanged(auth, (user) => {
   // console.log("onAuthStateChange", user);
   AuthStore.update((store) => {
@@ -25,6 +26,7 @@ const unsub = onAuthStateChanged(auth, (user) => {
   });
 });
 
+//Function to signIn the user and create the user in the "users" collection
 export const phoneSignIn = async (verificationId, smsCode) => {
   const credential = PhoneAuthProvider.credential(verificationId, smsCode);
   try {

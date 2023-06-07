@@ -7,6 +7,7 @@ import { RAPID_API_KEY } from "@env";
 import { auth, db } from "../firebase-config";
 import Toast from "react-native-root-toast";
 
+// Use the react native share to share stocks 
 const onShare = async (symbol, exchange) => {
   try {
     const result = await Share.share({
@@ -29,6 +30,7 @@ const onShare = async (symbol, exchange) => {
   }
 };
 
+// To check if data is 1 hour out of date
 const isOutOfDate = (itemDate) => {
   const oneHourAgo = moment().subtract(1, "hours");
   const newDate = moment(itemDate).tz("Asia/Hong_Kong").isBefore(oneHourAgo);
@@ -36,6 +38,7 @@ const isOutOfDate = (itemDate) => {
   return newDate;
 };
 
+// To check if any of the user array is out of date
 const isOutOfDateArray = (itemArray) => {
   const oneHourAgo = moment().subtract(1, "hour");
   const newArray = itemArray.find((item) =>
@@ -44,6 +47,7 @@ const isOutOfDateArray = (itemArray) => {
   return newArray ? true : false;
 };
 
+// function creating the watchlist object
 const watchListObj = (data, rtData) => {
   const dataObj = {
     symbol: rtData?.symbol,
@@ -64,6 +68,7 @@ const watchListObj = (data, rtData) => {
   return dataObj;
 };
 
+// Fetch and update the watchlist data in the "stocks" collection
 const fetchAndUpdate = async (symbols) => {
   let options = {
     method: "GET",

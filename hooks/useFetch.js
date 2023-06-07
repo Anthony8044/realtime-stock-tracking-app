@@ -12,6 +12,7 @@ const useFetch = (api, endpoint, query, checkApi = false) => {
   const [error, setError] = useState(null);
   let options = {};
 
+  // switch the api based on what api and endpoint is passed
   switch (api) {
     case "rapidapi":
       options = {
@@ -69,6 +70,7 @@ const useFetch = (api, endpoint, query, checkApi = false) => {
     fetchData();
   }, []);
 
+  // refetch data
   const refetch = () => {
     setIsLoading(true);
     setError(null);
