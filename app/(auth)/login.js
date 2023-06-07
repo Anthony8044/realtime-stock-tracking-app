@@ -66,6 +66,7 @@ const Login = () => {
         router.replace("/(tabs)/home");
       } else {
         console.log(resp.error);
+        setStep("promptSmsCode");
         Alert.alert("Login Error", resp.error?.message);
       }
     } else {

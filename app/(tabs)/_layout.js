@@ -6,7 +6,7 @@ const TabsLayout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: { height: 60 },
+        tabBarStyle: { paddingVertical: 6 },
         headerShown: false,
       }}
     >
@@ -16,7 +16,7 @@ const TabsLayout = () => {
           title: "Dashboard",
           tabBarLabelStyle: {
             fontFamily: FONT.regular,
-            paddingBottom: 4,
+            // paddingBottom: 4,
             fontSize: 12,
           },
           tabBarActiveTintColor: COLORS.primary,
@@ -36,7 +36,7 @@ const TabsLayout = () => {
           title: "Portfolio",
           tabBarLabelStyle: {
             fontFamily: FONT.regular,
-            paddingBottom: 4,
+            // paddingBottom: 4,
             fontSize: 12,
           },
           tabBarActiveTintColor: COLORS.primary,
@@ -56,7 +56,7 @@ const TabsLayout = () => {
           title: "Profile",
           tabBarLabelStyle: {
             fontFamily: FONT.regular,
-            paddingBottom: 4,
+            // paddingBottom: 4,
             fontSize: 12,
           },
           tabBarActiveTintColor: COLORS.primary,
